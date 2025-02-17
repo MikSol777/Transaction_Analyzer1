@@ -39,12 +39,15 @@ def process_card(card_number, expenses):
 def get_top_transactions(transactions):
     """Функция для получения топ-5 транзакций"""
     sorted_transactions = sorted(transactions, key=lambda x: x["Сумма платежа"], reverse=True)
-    return [{
-        "date": tx["Дата платежа"],
-        "amount": int(tx["Сумма платежа"]),
-        "category": tx["Категория"],
-        "description": tx["Описание"]
-    } for tx in sorted_transactions[:5]]
+    return [
+        {
+            "date": tx["Дата платежа"],
+            "amount": int(tx["Сумма платежа"]),
+            "category": tx["Категория"],
+            "description": tx["Описание"],
+        }
+        for tx in sorted_transactions[:5]
+    ]
 
 
 def get_exchange_rate():
@@ -58,10 +61,12 @@ def get_exchange_rate():
         data = response.json()
         return [
             {"currency": "USD", "rate": round(data["rates"]["USD"], 2)},
-            {"currency": "EUR", "rate": round(data["rates"]["EUR"], 2)}]
+            {"currency": "EUR", "rate": round(data["rates"]["EUR"], 2)},
+        ]
     else:
         print("Error fetching exchange rates:", response.status_code)
         return []
+
 
 def get_stock_prices():
     """Функция для получения стоимости акций из S&P500"""
@@ -92,7 +97,7 @@ def process_transaction(file_path, current_time):
     """Главная функция обработки данных"""
     df = pd.read_excel(file_path)
 
-    required_columns = ['Дата операции', 'Номер карты', 'Сумма операции с округлением', 'Категория']
+    required_columns = ["Дата операции", "Номер карты", "Сумма операции с округлением", "Категория"]
     if not all(col in df.columns for col in required_columns):
         raise ValueError(f"Отсутствуют обязательные колонки в файле: {', '.join(required_columns)}")
 
@@ -100,18 +105,18 @@ def process_transaction(file_path, current_time):
     card_expenses = {}
 
     for _, row in df.iterrows():
-        card_number = row['Номер карты']
-        expense = row['Сумма операции с округлением']
+        card_number = row["Номер карты"]
+        expense = row["Сумма операции с округлением"]
         transaction = {
-            "Дата операции": row['Дата операции'],
-            "Дата платежа": row['Дата платежа'],
+            "Дата операции": row["Дата операции"],
+            "Дата платежа": row["Дата платежа"],
             "Номер карты": card_number,
-            "Сумма операции": row['Сумма операции'],
-            "Валюта операции": row['Валюта операции'],
-            "Сумма платежа": row['Сумма платежа'],
-            "Категория": row['Категория'],
-            "Описание": row['Описание'],
-            "Сумма операции с округлением": row['Сумма операции с округлением']
+            "Сумма операции": row["Сумма операции"],
+            "Валюта операции": row["Валюта операции"],
+            "Сумма платежа": row["Сумма платежа"],
+            "Категория": row["Категория"],
+            "Описание": row["Описание"],
+            "Сумма операции с округлением": row["Сумма операции с округлением"],
         }
         transactions.append(transaction)
 
@@ -130,18 +135,19 @@ def process_transaction(file_path, current_time):
         "cards": cards_info,
         "top_transactions": top_transactions,
         "currency_rates": exchange_rate,
-        "stock_prices": sp500_stocks
+        "stock_prices": sp500_stocks,
     }
 
-    output_path = 'data/transaction_response.json'
-    if not os.path.exists('data'):
-        os.makedirs('data')
+    output_path = "data/transaction_response.json"
+    if not os.path.exists("data"):
+        os.makedirs("data")
 
-    with open(output_path, 'w', encoding='utf-8') as json_file:
+    with open(output_path, "w", encoding="utf-8") as json_file:
         json.dump(response, json_file, ensure_ascii=False, indent=4)
 
     print(f"Данные успешно сохранены в файл {output_path}")
     return json.dumps(response, ensure_ascii=False, indent=4)
+
 
 # current_time = "2025-02-16 14:30:00"
 # file_path = '../data/operations.xlsx'

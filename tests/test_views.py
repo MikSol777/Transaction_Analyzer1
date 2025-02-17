@@ -2,21 +2,31 @@ import pytest
 import json
 from unittest.mock import patch, mock_open
 import pandas as pd
-from src.views import process_transaction, get_greeting, process_card, get_top_transactions, get_exchange_rate, get_stock_prices
+from src.views import (
+    process_transaction,
+    get_greeting,
+    process_card,
+    get_top_transactions,
+    get_exchange_rate,
+    get_stock_prices,
+)
+
 
 @pytest.fixture
 def mock_read_excel():
-    mock_df = pd.DataFrame({
-        "Дата операции": ["2022-01-01", "2022-01-02"],
-        "Номер карты": ["1234", "5678"],
-        "Сумма операции с округлением": [100, 200],
-        "Категория": ["Food", "Transport"],
-        "Дата платежа": ["2022-01-01", "2022-01-02"],
-        "Сумма операции": [100, 200],
-        "Валюта операции": ["RUB", "USD"],
-        "Сумма платежа": [100, 200],
-        "Описание": ["Dinner", "Bus ride"]
-    })
+    mock_df = pd.DataFrame(
+        {
+            "Дата операции": ["2022-01-01", "2022-01-02"],
+            "Номер карты": ["1234", "5678"],
+            "Сумма операции с округлением": [100, 200],
+            "Категория": ["Food", "Transport"],
+            "Дата платежа": ["2022-01-01", "2022-01-02"],
+            "Сумма операции": [100, 200],
+            "Валюта операции": ["RUB", "USD"],
+            "Сумма платежа": [100, 200],
+            "Описание": ["Dinner", "Bus ride"],
+        }
+    )
     with patch("pandas.read_excel", return_value=mock_df):
         yield mock_df
 
@@ -25,8 +35,9 @@ def test_process_transaction(mock_read_excel):
     file_path = "fake_path.xlsx"
     current_time = "2023-03-10 15:00:00"
 
-    with patch("src.views.get_exchange_rate", return_value=[{"currency": "USD", "rate": 75.0}]), \
-            patch("src.views.get_stock_prices", return_value=[{"stock": "AAPL", "price": 145.3}]):
+    with patch("src.views.get_exchange_rate", return_value=[{"currency": "USD", "rate": 75.0}]), patch(
+        "src.views.get_stock_prices", return_value=[{"stock": "AAPL", "price": 145.3}]
+    ):
         result = process_transaction(file_path, current_time)
 
         result_obj = json.loads(result)
@@ -37,16 +48,19 @@ def test_process_transaction(mock_read_excel):
         assert "stock_prices" in result_obj
 
 
-
 def test_missing_columns():
-    mock_df = pd.DataFrame({
-        "Дата операции": ["2022-01-01"],
-        "Номер карты": ["1234"],
-        "Сумма операции с округлением": [100],
-    })
+    mock_df = pd.DataFrame(
+        {
+            "Дата операции": ["2022-01-01"],
+            "Номер карты": ["1234"],
+            "Сумма операции с округлением": [100],
+        }
+    )
     with patch("pandas.read_excel", return_value=mock_df):
-        with pytest.raises(ValueError,
-                           match="Отсутствуют обязательные колонки в файле: Дата операции, Номер карты, Сумма операции с округлением, Категория"):
+        with pytest.raises(
+            ValueError,
+            match="Отсутствуют обязательные колонки в файле: Дата операции, Номер карты, Сумма операции с округлением, Категория",
+        ):
             file_path = "fake_path.xlsx"
             current_time = "2023-03-10 15:00:00"
             process_transaction(file_path, current_time)
@@ -81,11 +95,7 @@ def test_get_top_transactions():
 
 
 def test_get_exchange_rate():
-    mock_data = {
-        "rates": {"USD": 75.0, "EUR": 85.0},
-        "base": "RUB",
-        "date": "2023-03-10"
-    }
+    mock_data = {"rates": {"USD": 75.0, "EUR": 85.0}, "base": "RUB", "date": "2023-03-10"}
 
     with patch("requests.get") as mock_get:
         mock_response = patch("requests.Response")
@@ -94,7 +104,4 @@ def test_get_exchange_rate():
         mock_get.return_value = mock_response
 
         result = get_exchange_rate()
-        assert result == [
-            {"currency": "USD", "rate": 75.0},
-            {"currency": "EUR", "rate": 85.0}
-        ]
+        assert result == [{"currency": "USD", "rate": 75.0}, {"currency": "EUR", "rate": 85.0}]
