@@ -1,0 +1,41 @@
+{
+    "greeting": "Добрый день",
+    "cards": [
+        {
+            "last_digits": "1234",
+            "total_spent": 100,
+            "cashback": 1
+        },
+        {
+            "last_digits": "5678",
+            "total_spent": 200,
+            "cashback": 2
+        }
+    ],
+    "top_transactions": [
+        {
+            "date": "2022-01-02",
+            "amount": 200,
+            "category": "Transport",
+            "description": "Bus ride"
+        },
+        {
+            "date": "2022-01-01",
+            "amount": 100,
+            "category": "Food",
+            "description": "Dinner"
+        }
+    ],
+    "currency_rates": [
+        {
+            "currency": "USD",
+            "rate": 75.0
+        }
+    ],
+    "stock_prices": [
+        {
+            "stock": "AAPL",
+            "price": 145.3
+        }
+    ]
+}
