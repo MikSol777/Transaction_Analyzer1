@@ -9,11 +9,11 @@ def save_report_to_file(func: Callable):
 
         result = func(*args, **kwargs)
 
-        filename = 'data/reports.json'
+        filename = "data/reports.json"
 
         try:
             # Записываем данные в файл, перезаписывая его
-            with open(filename, 'w', encoding='utf-8') as f:
+            with open(filename, "w", encoding="utf-8") as f:
                 json.dump(result, f, ensure_ascii=False, indent=4)
             print(f"Отчет записан в файл: {filename}")
         except Exception as e:
@@ -22,5 +22,3 @@ def save_report_to_file(func: Callable):
         return result
 
     return wrapper
-
-

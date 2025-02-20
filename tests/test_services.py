@@ -3,23 +3,10 @@ import json
 from src.services import search_transactions
 
 transactions = [
-    {
-        'description': 'Покупка кофе в кафе',
-        'category': 'Еда',
-        'amount': 100
-    },
-    {
-        'description': 'Оплата интернета',
-        'category': 'Услуги',
-        'amount': 300
-    },
-    {
-        'description': 'Покупка билетов в кино',
-        'category': 'Развлечения',
-        'amount': 500
-    },
+    {"description": "Покупка кофе в кафе", "category": "Еда", "amount": 100},
+    {"description": "Оплата интернета", "category": "Услуги", "amount": 300},
+    {"description": "Покупка билетов в кино", "category": "Развлечения", "amount": 500},
 ]
-
 
 
 class TestSearchTransactions(unittest.TestCase):
@@ -27,26 +14,14 @@ class TestSearchTransactions(unittest.TestCase):
     def test_search_transactions_found(self):
 
         query = "кофе"
-        expected_result = [
-            {
-                'description': 'Покупка кофе в кафе',
-                'category': 'Еда',
-                'amount': 100
-            }
-        ]
+        expected_result = [{"description": "Покупка кофе в кафе", "category": "Еда", "amount": 100}]
         result = json.loads(search_transactions(query, transactions))
         self.assertEqual(result, expected_result)
 
     def test_search_transactions_case_insensitive(self):
 
         query = "КОФЕ"
-        expected_result = [
-            {
-                'description': 'Покупка кофе в кафе',
-                'category': 'Еда',
-                'amount': 100
-            }
-        ]
+        expected_result = [{"description": "Покупка кофе в кафе", "category": "Еда", "amount": 100}]
         result = json.loads(search_transactions(query, transactions))
         self.assertEqual(result, expected_result)
 
@@ -61,16 +36,8 @@ class TestSearchTransactions(unittest.TestCase):
 
         query = "покупка"
         expected_result = [
-            {
-                'description': 'Покупка кофе в кафе',
-                'category': 'Еда',
-                'amount': 100
-            },
-            {
-                'description': 'Покупка билетов в кино',
-                'category': 'Развлечения',
-                'amount': 500
-            }
+            {"description": "Покупка кофе в кафе", "category": "Еда", "amount": 100},
+            {"description": "Покупка билетов в кино", "category": "Развлечения", "amount": 500},
         ]
         result = json.loads(search_transactions(query, transactions))
         self.assertEqual(result, expected_result)
@@ -84,4 +51,3 @@ class TestSearchTransactions(unittest.TestCase):
             json.loads(result)
         except ValueError:
             self.fail("Возвращаемый результат не является валидным JSON")
-
